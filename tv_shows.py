@@ -15,23 +15,32 @@ def fill_adjacency_matrix(matrix, a_rating, b_rating):
 
 
 def optimize_air_rating(matrix):
-  element_count = matrix.shape[0]
-  print(element_count)
-
+  dp_table = np.zeros(shape=matrix.shape)
+  starting_episode_idx = 0
+  
+  for set_size in range(2, matrix.shape[0]):
+    for i in range(0,matrix.shape[0]):
+      if set_size == 2:
+        dp_table[set_size, i] = matrix[starting_episode_idx, i]
+      else :
+        # dp_table[set_size,i] = max()
+        continue
+  print(dp_table)
 
 def tvshows(a, b):
   # implement your solution here
   adjacency_matrix = np.zeros(shape=(2*len(a) , 2*len(a) ))
   fill_adjacency_matrix(adjacency_matrix, a, b)
-  optimize_air_rating(adjacency_matrix)
   print(adjacency_matrix)
+  print("\n")
+  optimize_air_rating(adjacency_matrix)
   return 23066
 
 # test_a = [53,20,50,22,63,43,43,39,83,76]
 # test_b = [73,83,10,23,34,24,0,77,33,32]
 
-test_a = [1,2,3,4]
-test_b = [2,1,3,5]
+test_a = [1,2,3]
+test_b = [5,4,8]
 
 expected_result = 23066
 

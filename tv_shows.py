@@ -2,45 +2,74 @@
 import numpy as np
 import pprint
 
-def fill_adjacency_matrix(matrix, a_rating, b_rating):
-  for i in range(0, len(a_rating)):
-    for j in range(0, len(a_rating)):
-      matrix[i,j+len(a_rating)] = a_rating[i] * b_rating[j]
-      matrix[i+len(a_rating),j] = matrix[i,j+len(a_rating)]
-  for i in range(0, len(a_rating)):
-    for j in range(0, len(a_rating)):
-      if j == i+1 or j == i-1:
-        matrix[i,j] = a_rating[i]*a_rating[j]
-        matrix[i+len(a_rating),j+len(a_rating)] = b_rating[i] * b_rating[j]
 
+def get_max_product(a, b,a_idx = 0, b_idx = 0):
+  r1 = r2 = r3 = 0
 
-def optimize_air_rating(matrix):
-  dp_table = np.zeros(shape=matrix.shape)
-  starting_episode_idx = 0
+  if a_idx == b_idx == len(a):
+    return 0
+
+  if a_idx + 2 <= len(a):
+    r1 = a[a_idx]*a[a_idx+1] + get_max_product(a,b,
+       a_idx= a_idx + 2,
+        b_idx= b_idx)
+
+  if a_idx + 1 <= len(a) and b_idx + 1 <= len(b):
+    r2 = a[a_idx]*b[b_idx] + get_max_product(a,b,
+      a_idx = a_idx+1,
+        b_idx = b_idx+1)
+
+  if b_idx + 2 <= len(a):
+    r3 = b[b_idx]*b[b_idx+1] + get_max_product(a,b,
+       a_idx= a_idx,
+        b_idx= b_idx + 2)
+
+  return max(r1,r2,r3)
+
+def get_max_product_dp(a,b):
   
-  for set_size in range(2, matrix.shape[0]):
-    for i in range(0,matrix.shape[0]):
-      if set_size == 2:
-        dp_table[set_size, i] = matrix[starting_episode_idx, i]
-      else :
-        # dp_table[set_size,i] = max()
-        continue
-  print(dp_table)
+  matrix = np.zeros(shape=(len(a),len(a)))
+  a_idx = 0
+  b_idx = 0
 
+  while a_idx <= len(a):
+    while b_idx <= len(b):
+      r1 = r2 = r3 = 0
+      if a_idx + 2 <= len(a):
+        r1 = a[a_idx]*a[a_idx-1] + matrix[a_idx-2,b_idx]
+
+      if a_idx + 1 <= len(a) and b_idx + 1 <= len(b):
+        r2 = a[a_idx]*b[b_idx] + matrix[a_idx-1, b_idx-1]
+
+      if b_idx + 2 <= len(a):
+        r3 = b[b_idx]*b[b_idx-1] + matrix[a_idx,b_idx-2]
+
+      maximum = max(r1,r2,r3)
+      matrix[a_idx,b_idx] = maximum
+      if r1 == maximum: 
+        a_idx+=2
+      elif r2 == maximum: 
+        a_idx += 1 
+        b_idx += 1
+      else : 
+        b_idx += 2
+
+      print(matrix)
+    return matrix.max
+  
 def tvshows(a, b):
   # implement your solution here
-  adjacency_matrix = np.zeros(shape=(2*len(a) , 2*len(a) ))
-  fill_adjacency_matrix(adjacency_matrix, a, b)
-  print(adjacency_matrix)
-  print("\n")
-  optimize_air_rating(adjacency_matrix)
-  return 23066
+  t = get_max_product_dp(a,b)
+  return get_max_product(a,b)
 
 # test_a = [53,20,50,22,63,43,43,39,83,76]
 # test_b = [73,83,10,23,34,24,0,77,33,32]
 
-test_a = [1,2,3]
-test_b = [5,4,8]
+
+
+
+test_a = [1,2]
+test_b = [3,4]
 
 expected_result = 23066
 

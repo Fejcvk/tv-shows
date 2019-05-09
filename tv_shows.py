@@ -32,40 +32,54 @@ def get_max_product(a, b,a_idx = 0, b_idx = 0):
   return val  
 
 def get_max_product_dp(a,b):
-
-  result = np.zeros(shape=(len(a)+1,len(a)+1))
-  for i in range(0,result.shape[0]):
-    for j in range(0, result.shape[1]):
-      if i == 0 and j == 0:
-        result[i,j] = 0
-      elif i == 1 and j == 0:
-        result[i, j] = a[i-1]
-      elif j == 1 and i == 0:
-        result[i,j] = b[j-1]
-      elif i == j == 1:
-        result[i,j] = a[i-1]*b[j-1]
+  size = len(a)+1
+  result = np.zeros(shape=(size,size))
+  a = np.array(a)
+  b = np.array(b)
+  for i in range(0,size):
+    for j in range(0, size):
+      if i < 2 and j < 2:
+        if i == j == 0:
+          result[i,j] = 0
+        elif i-1 > 0 and j-1 > 0:
+          result[i-1,j-1] + a[i-1]*b[j-1]
+        elif i > j:
+          result[i,j] = a[i-1]
+        else :
+          result[i,j] = b[j-1]
       else :
+        r1=r2=r3=0
+        if i - 2 >= 0:
+          r1 = result[i-2,j] + a[i-2]*a[i-1]
+        if j - 2 >= 0:
+          r2 = result[i,j-2] + b[j-2]*b[j-1]
+        if i-1>=0 and j-1>=0:
+          r3=result[i-1,j-1] + a[i-1]*b[j-1]
         result[i,j] = max (
-          result[i-1,j-1] + a[i-1]*b[j-1],
-          result[i-2,j] + a[i-2]*a[i-1],
-          result[i,j-2] + b[j-2]*b[j-1]
+          r3,
+          r1,
+          r2
         )
-  print(result)
-  return result.max
+  return result[size-1,size-1]
   
 def tvshows(a, b):
   # implement your solution here
-  # t = get_max_product_dp(a,b)
-  return get_max_product(a,b)
+  dp_time_start = time.time()
+  t = get_max_product_dp(a,b)
+  dp_time_end = time.time()
+  rec_t_start = time.time()
+  t2 = 10
+  rec_t_end = time.time()
+  print(f"From dp = {t} obtained in {dp_time_end - dp_time_start}s , from recursion = {t2} obtained in {rec_t_end - rec_t_start}s")
+  return t
+test_a = [random.randint(0,100) for i in range(0,5000)]
+test_b = [random.randint(0,100) for i in range(0,5000)]
 
-test_a = [random.randint(0,100) for i in range(0,500)]
-test_b = [random.randint(0,100) for i in range(0,500)]
 
 
 
-
-# test_a = [1,2]
-# test_b = [3,4]
+# test_a = [53,20,50,22,63,43,43,39,83,76]
+# test_b = [73,83,10,23,34,24,0,77,33,32]
 
 expected_result = 23066
 start = time.time()
